@@ -1,2 +1,2 @@
-# Read2write
+# read2write
 Read from a file and write to DB
