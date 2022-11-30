@@ -5,9 +5,20 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 
+import static com.swan.read2write.Constants.RECORDS_COUNT;
+import static com.swan.read2write.Constants.TEST_DATA_FILE_NAME;
+
 @Component
 @Slf4j
 public class Util {
+
+    public void createLocalFile() throws IOException {
+        FileOutputStream outputStream = new FileOutputStream(TEST_DATA_FILE_NAME);
+        for (int i = 1; i <= RECORDS_COUNT; i++) {
+            outputStream.write(("" + i + "\n").getBytes());
+        }
+        outputStream.close();
+    }
 
     public String getCertainLineFromFile (String fileName, int position) throws IOException {
         BufferedReader bReader = new BufferedReader(new FileReader(fileName));
