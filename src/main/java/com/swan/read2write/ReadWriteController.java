@@ -1,6 +1,9 @@
 package com.swan.read2write;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -12,10 +15,18 @@ import static com.swan.read2write.Constants.TEST_DATA_FILE_NAME;
 @RequestMapping(value = "/readWrite")
 @Slf4j
 public class ReadWriteController {
+    private final JobLauncher jLauncher;
+    private final Job idTextJob;
+
     private final ReadWriteService rwService;
     private final Util utility;
 
-    public ReadWriteController(ReadWriteService rwService, Util utility) {
+    public ReadWriteController(JobLauncher jLauncher,
+                               Job idTextJob,
+                               ReadWriteService rwService,
+                               Util utility) {
+        this.jLauncher = jLauncher;
+        this.idTextJob = idTextJob;
         this.rwService = rwService;
         this.utility = utility;
     }
@@ -66,5 +77,10 @@ public class ReadWriteController {
             log.error("Failed to Read the File and save to H2 DB.", e);
             return "Failed to read a Line in the file provided.";
         }
+    }
+
+    @RequestMapping("/jobLauncher")
+    public void handle() throws Exception{
+        jLauncher.run(idTextJob, new JobParameters());
     }
 }
