@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.swan.read2write.Constants.BATCH_SIZE;
+
 @Service
 @Slf4j
 public class ReadWriteService {
@@ -32,23 +34,35 @@ public class ReadWriteService {
         List<IdText> texts = new ArrayList<IdText>();
         String tempIdStr = "";
         int tempId = -1;
+        int iteratorCount = 0;
         while ((tempIdStr = bReader.readLine()) != null) {
             try {
                 if (!tempIdStr.isBlank() && (tempId = Integer.parseInt(tempIdStr))>-1) {
                     texts.add(new IdText(tempId, utility.convertStringIdToText(tempIdStr)));
                 }
+                if (texts.size() > BATCH_SIZE) {
+                    rwRepo.saveAll(texts);
+                    texts.clear();
+                    iteratorCount++;
+                    log.info("Wrote " + BATCH_SIZE + " records into the database in Iteration " + iteratorCount + ".");
+                }
             } catch (NumberFormatException e) {
                 log.error("Provided String " + tempIdStr + " is not a number.", e);
             }
         }
-        rwRepo.saveAll(texts);
-        return "Successfully wrote the data into H2 DB. No.of rows added = " + texts.size();
+        if (!texts.isEmpty())
+            rwRepo.saveAll(texts);
+        return "Successfully wrote the data into H2 DB.";
     }
 
     public List<IdText> getAllTexts() {
         List<IdText> texts = new ArrayList<IdText>();
         rwRepo.findAll().forEach(texts::add);
         return texts;
+    }
+
+    public long getRowsCount() {
+        return rwRepo.count();
     }
 
     public IdText getText(int id) {
