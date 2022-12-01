@@ -33,8 +33,4 @@ class UtilTest {
         assertEquals(""+RECORDS_COUNT,
                 utilTest.getCertainLineFromFile(TEST_DATA_FILE_NAME, RECORDS_COUNT));
     }
-
-    @Test
-    void createLocalFile_basic() {
-    }
 }

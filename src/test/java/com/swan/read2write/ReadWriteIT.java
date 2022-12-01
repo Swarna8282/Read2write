@@ -34,7 +34,7 @@ public class ReadWriteIT {
     public void testRecordsInH2Db() {
         try {
             rwService.readFileAndWrite2Db(TEST_DATA_FILE_NAME);
-            assertEquals(RECORDS_COUNT, rwService.getAllTexts().size());
+            assertEquals(RECORDS_COUNT, rwService.getRowsCount());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
