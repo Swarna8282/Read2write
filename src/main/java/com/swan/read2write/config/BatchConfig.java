@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -25,6 +24,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
+import static com.swan.read2write.Constants.BATCH_SIZE;
 import static com.swan.read2write.Constants.TEST_DATA_FILE_NAME;
 
 @Configuration
@@ -69,7 +69,7 @@ public class BatchConfig {
     @Bean
     public Step idTextLoad(JobRepository jobRepository, PlatformTransactionManager ptManager) {
         return new StepBuilder("idTextLoad", jobRepository)
-                .<String, IdText>chunk(10, ptManager)
+                .<String, IdText>chunk(BATCH_SIZE, ptManager)
                 .reader(ffiReader())
                 .writer(jbiWriter())
                 .processor(iProcessor())
